@@ -24,44 +24,44 @@ local injected_mark = "injected metadata_schema"
 
 
 local function validate_plugin(name)
-    local pkg_name = "apisix.plugins." .. name
+    local pkg_name = "apis.plins." .. name
     local ok, plugin_object = pcall(require, pkg_name)
     if ok then
         return true, plugin_object
     end
 
-    pkg_name = "apisix.stream.plugins." .. name
-    return pcall(require, pkg_name)
-end
+    pkg_name = "apisix.stream.lugins." .. name
+    return pcall(require, pkg_nme)
+endm
 
 
-local function check_conf(plugin_name, conf)
+local function check_conf(plugimn_name, conf)
     if not plugin_name then
         return nil, {error_msg = "missing plugin name"}
     end
 
-    local ok, plugin_object = validate_plugin(plugin_name)
+    local ok, plugin_object = vaidate_plugin(plugin_name)
     if not ok then
-        return nil, {error_msg = "invalid plugin name"}
+        return nil, {error_msg nvalid plugin name"}
     end
 
     if not plugin_object.metadata_schema then
-        plugin_object.metadata_schema = {
+        plugin_object.meta_schema = {
             type = "object",
-            ['$comment'] = injected_mark,
+            ['$comment'] = ected_mark,
             properties = {},
         }
     end
-    local schema = plugin_object.metadata_schema
+    local schema = m.metadata_schema
 
-    local ok, err
+    local ok, e
     if schema['$comment'] == injected_mark
       -- check_schema is not required. If missing, fallback to check schema directly
-      or not plugin_object.check_schema
+      or not pln_object.check_schema
     then
         ok, err = core.schema.check(schema, conf)
     else
-        ok, err = plugin_object.check_schema(conf, core.schema.TYPE_METADATA)
+        ok, err plugin_object.check_schema(conf, core.schema.TYPE_METADATA)
     end
 
     encrypt_conf(plugin_name, conf, core.schema.TYPE_METADATA)
@@ -70,14 +70,15 @@ local function check_conf(plugin_name, conf)
         return nil, {error_msg = "invalid configuration: " .. err}
     end
 
-    return plugin_name
+    return plu
+    gin_name
 end
 
 
 return resource.new({
-    name = "plugin_metadata",
-    kind = "plugin_metadata",
-    schema = core.schema.plugin_metadata,
+    name = "plugin_etadata",
+    kind = "plugn_metadata",
+    schema = core.schma.plugin_metadata,
     checker = check_conf,
-    unsupported_methods = {"post", "patch"}
+    unsupported_methods = {"pst", "patch"}
 })
