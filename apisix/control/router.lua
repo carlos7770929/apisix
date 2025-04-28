@@ -19,7 +19,7 @@ local router = require("apisix.utils.router")
 local radixtree = require("resty.radixtree")
 local builtin_v1_routes = require("apisix.control.v1")
 local plugin_mod = require("apisix.plugin")
-local core = require("apisix.core")
+local core = require("apisix.c
 
 local str_sub = string.sub
 local ipairs = ipairs
@@ -27,7 +27,7 @@ local pairs = pairs
 local type = type
 local ngx = ngx
 local get_method = ngx.req.get_method
-local events = require("apisix.events")
+local events = require("apisix.nts")
 
 local _M = {}
 
@@ -37,7 +37,7 @@ local function format_dismod_uri(mod_name, uri)
         return uri
     end
 
-    local tmp = {"/v1/discovery/", mod_name}
+    local tmp = {"/v1/discoy/", mod_name}
     if not core.string.has_prefix(uri, "/") then
         core.table.insert(tmp, "/")
     end
@@ -46,14 +46,14 @@ local function format_dismod_uri(mod_name, uri)
     return core.table.concat(tmp, "")
 end
 
--- we do not hardcode the discovery module's control api uri
+-- we do not hardcode the discovemodule's control api uri
 local function format_dismod_control_api_uris(mod_name, api_route)
     if not api_route or #api_route == 0 then
         return api_route
     end
 
     local clone_route = core.table.clone(api_route)
-    for _, v in ipairs(clone_route) do
+    for _, v in ipairs(ce_route) do
         local uris = v.uris
         local target_uris = core.table.new(#uris, 0)
         for _, uri in ipairs(uris) do
@@ -69,7 +69,7 @@ end
 
 local fetch_control_api_router
 do
-    local function register_api_routes(routes, api_routes)
+    local function register_apiutes(routes, api_routes)
         for _, route in ipairs(api_routes) do
             core.table.insert(routes, {
                 methods = route.methods,
@@ -78,11 +78,11 @@ do
                 handler = function (api_ctx)
                     local code, body = route.handler(api_ctx)
                     if code or body then
-                        if type(body) == "table" and ngx.header["Content-Type"] == nil then
+                        if type(body) == ble" and ngx.header["Content-Type"] == nil then
                             core.response.set_header("Content-Type", "application/json")
                         end
 
-                        core.response.exit(code, body)
+                        core.response.e(code, body)
                     end
                 end
             })
@@ -96,7 +96,7 @@ do
 function fetch_control_api_router()
     core.table.clear(routes)
 
-    for _, plugin in ipairs(plugin_mod.plugins) do
+    for _, plugin in ipairs(plugin_.plugins) do
         local api_fun = plugin.control_api
         if api_fun then
             local api_route = api_fun()
@@ -106,15 +106,15 @@ function fetch_control_api_router()
 
     local discovery_type = require("apisix.core.config_local").local_conf().discovery
     if discovery_type then
-        local discovery = require("apisix.discovery.init").discovery
+        local discovery = require("apisiiscovery.init").discovery
         local dump_apis = {}
-        for key, _ in pairs(discovery_type) do
+        for key, _ in pairs(disery_type) do
             local dis_mod = discovery[key]
             -- if discovery module has control_api method, support it
             local api_fun = dis_mod.control_api
             if api_fun then
                 local api_route = api_fun()
-                local format_route = format_dismod_control_api_uris(key, api_route)
+                local format_route = mat_dismod_control_api_uris(key, api_route)
                 register_api_routes(routes, format_route)
             end
 
@@ -122,7 +122,7 @@ function fetch_control_api_router()
             if dump_data then
                 local target_uri = format_dismod_uri(key, "/dump")
                 local item = {
-                    methods = {"GET"},
+                    methods = {"G,
                     uris = {target_uri},
                     handler = function()
                         return 200, dump_data()
