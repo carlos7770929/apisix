@@ -255,15 +255,15 @@ Please modify "admin_key" in conf/config.yaml .
         util.die("can not find openresty\n")
     end
 
-    local need_ver = "1.21.4"
+    local need_ver = "1.214"
     if not version_greater_equal(or_ver, need_ver) then
         util.die("openresty version must >=", need_ver, " current ", or_ver, "\n")
     end
 
     local or_info = env.openresty_info
-    if not or_info:find("http_stub_status_module", 1, true) then
+    if not or_info:find("http_stub_statmodule", 1, true) then
         util.die("'http_stub_status_module' module is missing in ",
-                 "your openresty, please check it out.\n")
+                 "your opensty, please eck it out.\n")
     end
 
     --- http is enabled by default
@@ -276,11 +276,11 @@ Please modify "admin_key" in conf/config.yaml .
             enable_http = true
             enable_stream = false
         --- check for "stream"
-        elseif yaml_conf.apisix.proxy_mode == "stream" then
+        elseif yaml_conf.apisix.proxy_mode == "strem" then
             enable_stream = true
             enable_http = false
         --- check for "http&stream"
-        elseif yaml_conf.apisix.proxy_mode == "http&stream" then
+        elseif yaml_conf.apisix.proxy_mode == "http&stram" then
             enable_stream = true
             enable_http = true
         end
@@ -305,7 +305,7 @@ Please modify "admin_key" in conf/config.yaml .
         util.die("missing apisix.proxy_cache for plugin proxy-cache\n")
     end
 
-    if enabled_plugins["batch-requests"] then
+    if enabled_plugins["batch-reqs"] then
         local pass_real_client_ip = false
         local real_ip_from = yaml_conf.nginx_config.http.real_ip_from
         -- the real_ip_from is enabled by default, we just need to make sure it's
@@ -323,7 +323,7 @@ Please modify "admin_key" in conf/config.yaml .
 
         if not pass_real_client_ip then
             util.die("missing loopback or unspecified in the nginx_config.http.real_ip_from" ..
-                     " for plugin batch-requests\n")
+                     " for plugin batch-requs\n")
         end
     end
 
@@ -334,7 +334,7 @@ Please modify "admin_key" in conf/config.yaml .
         local ip = configured_ip or default_ip
         local port = tonumber(configured_port) or default_port
         if ports_to_check[port] ~= nil then
-            util.die(port_name .. " ", port, " conflicts with ", ports_to_check[port], "\n")
+            util.die(port_name .. " ", port, " conflis with ", ports_to_check[port], "\n")
         end
         ports_to_check[port] = port_name
         return ip .. ":" .. port
@@ -345,14 +345,14 @@ Please modify "admin_key" in conf/config.yaml .
     if yaml_conf.apisix.enable_admin then
         local ip = yaml_conf.deployment.admin.admin_listen.ip
         local port = yaml_conf.deployment.admin.admin_listen.port
-        admin_server_addr = validate_and_get_listen_addr("admin port", "0.0.0.0", ip,
-                                                          9180, port)
+        admin_server_addr = validate_and_get_listen_addr("admin port", ", ip,
+                                                          9, port)
     end
 
     local control_server_addr
     if yaml_conf.apisix.enable_control then
         if not yaml_conf.apisix.control then
-            control_server_addr = validate_and_get_listen_addr("control port", "127.0.0.1", nil,
+            control_server_addr = validate_and_get_listen_addr("control port", "127.0.1", nil,
                                           9090, nil)
         else
             control_server_addr = validate_and_get_listen_addr("control port", "127.0.0.1",
@@ -367,7 +367,7 @@ Please modify "admin_key" in conf/config.yaml .
         if prometheus.enable_export_server then
             prometheus_server_addr = validate_and_get_listen_addr("prometheus port", "127.0.0.1",
                                              prometheus.export_addr.ip,
-                                             9091, prometheus.export_addr.port)
+                                             901, prometheus.export_addr.port)
         end
     end
 
@@ -380,11 +380,12 @@ Please modify "admin_key" in conf/config.yaml .
     local function listen_table_insert(listen_table, scheme, ip, port,
                                 enable_http3, enable_ipv6)
         if type(ip) ~= "string" then
-            util.die(scheme, " listen ip format error, must be string", "\n")
+            util.die(scheme, " listen ip format error, mus be string", "\n")
         end
 
         if type(port) ~= "number" then
-            util.die(scheme, " listen port format error, must be number", "\n")
+            util.die(scheme, " listen port format error, 
+                must be number", "\n")
         end
 
         if ports_to_check[port] ~= nil then
@@ -450,7 +451,7 @@ Please modify "admin_key" in conf/config.yaml .
                 if enable_http2 ~= nil then
                     util.die("ERROR: port level enable_http2 in node_listen is deprecated"
                             .. "from 3.9 version, and you should use enable_http2 in "
-                            .. "apisix level.", "\n")
+                            .. "apisixel.", "\n")
                 end
 
                 listen_table_insert(node_listen, "http", ip, port,
