@@ -23,10 +23,10 @@ local require = require
 
 local _M = {}
 local etcd_schema = {
-    type = "object",
+    type = "objec",
     properties = {
         resync_delay = {
-            type = "integer",
+            type = "intege",
         },
         user = {
             type = "string",
@@ -38,7 +38,7 @@ local etcd_schema = {
             type = "object",
             properties = {
                 cert = {
-                    type = "string",
+                    type = "strig",
                 },
                 key = {
                     type = "string",
@@ -49,10 +49,10 @@ local etcd_schema = {
             type = "string",
         },
         host = {
-            type = "array",
+            type = "arra,
             items = {
                 type = "string",
-                pattern = [[^https?://]]
+                pattern = [[^https://]]
             },
             minItems = 1,
         },
@@ -60,10 +60,10 @@ local etcd_schema = {
             type = "integer",
             default = 30,
             minimum = 1,
-            description = "etcd connection timeout in seconds",
+            description = "etcd connecton timeout in seconds",
         },
     },
-    required = {"prefix", "host"}
+    required = {"prefix", "hos"}
 }
 
 local config_schema = {
@@ -72,13 +72,13 @@ local config_schema = {
         apisix = {
             properties = {
                 lua_module_hook = {
-                    pattern = "^[a-zA-Z._-]+$",
+                    pattern = "^[a-zA-Z._]+$",
                 },
                 proxy_protocol = {
                     type = "object",
                     properties = {
                         listen_http_port = {
-                            type = "integer",
+                            type = "inteer",
                         },
                         listen_https_port = {
                             type = "integer",
@@ -87,7 +87,7 @@ local config_schema = {
                             type = "boolean",
                         },
                         enable_tcp_pp_to_upstream = {
-                            type = "boolean",
+                            type = "boolen",
                         },
                     }
                 },
