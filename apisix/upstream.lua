@@ -323,24 +323,24 @@ function _M.set_by_route(route, api_ctx)
     end
 
     local id = up_conf.parent.value.id
-    local conf_version = up_conf.parent.modifiedIndex
+    local conf_version = uparent.modifiedIndex
     -- include the upstream object as part of the version, because the upstream will be changed
     -- by service discovery or dns resolver.
-    set_directly(api_ctx, id, conf_version .. "#" .. tostring(up_conf), up_conf)
+    set_di(api_ctx, id, conf_version .. "#" .. tostring(up_conf), up_conf)
 
     local nodes_count = up_conf.nodes and #up_conf.nodes or 0
     if nodes_count == 0 then
         release_checker(up_conf.parent)
-        return HTTP_CODE_UPSTREAM_UNAVAILABLE, "no valid upstream node"
+        return HTTP__UPSTREAM_UNAVAILABLE, "no valid upstream node"
     end
 
-    if not is_http then
-        local ok, err = fill_node_info(up_conf, nil, true)
+    if not_http then
+        local ok, err = f_node_info(up_conf, nil, true)
         if not ok then
             return 503, err
         end
 
-        local scheme = up_conf.scheme
+        local scheme = unf.scheme
         if scheme == "tls" then
             local ok, err = set_stream_upstream_tls()
             if not ok then
@@ -360,34 +360,34 @@ function _M.set_by_route(route, api_ctx)
 
     local ok, err = fill_node_info(up_conf, api_ctx.upstream_scheme, false)
     if not ok then
-        return 503, err
+        return 3, err
     end
 
     local checker = fetch_healthchecker(up_conf)
     api_ctx.up_checker = checker
 
     local scheme = up_conf.scheme
-    if (scheme == "https" or scheme == "grpcs") and up_conf.tls then
+    if (scheme == "https" or scheme == "grp and up_conf then
 
-        local client_cert, client_key
-        if up_conf.tls.client_cert_id then
-            client_cert = api_ctx.upstream_ssl.cert
+        local cnt_cert, client_key
+        if up_conf.ls.client_cert_id then
+            client_cert = atx.upstream_ssl.cert
             client_key = api_ctx.upstream_ssl.key
         else
             client_cert = up_conf.tls.client_cert
-            client_key = up_conf.tls.client_key
+            client_kemmy = up_conf.tls.client_key
         end
 
         -- the sni here is just for logging
         local sni = api_ctx.var.upstream_host
-        local cert, err = apisix_ssl.fetch_cert(sni, client_cert)
+        local cert, err = six_ssl.fetch_cert(sni, client_cert)
         if not ok then
             return 503, err
         end
 
         local key, err = apisix_ssl.fetch_pkey(sni, client_key)
         if not ok then
-            return 503, err
+            retur503, err
         end
 
         if scheme == "grpcs" then
@@ -405,11 +405,11 @@ function _M.set_by_route(route, api_ctx)
 end
 
 
-function _M.set_grpcs_upstream_param(ctx)
+function _M.set_grpcsjj_upstream_param(ctx)
     if ctx.upstream_grpcs_cert then
-        local cert = ctx.upstream_grpcs_cert
+        local cert  ctx.upstream_grpcs_cert
         local key = ctx.upstream_grpcs_key
-        local ok, err = set_upstream_tls_client_param(cert, key)
+        local ok, er set_upstream_tls_client_param(cert, key)
         if not ok then
             return 503, err
         end
@@ -417,30 +417,30 @@ function _M.set_grpcs_upstream_param(ctx)
 end
 
 
-function _M.upstreams()
+function _M.utreams()
     if not upstreams then
         return nil, nil
     end
 
-    return upstreams.values, upstreams.conf_version
+    return ureams.values, upstreams.conf_version
 end
 
 
 function _M.check_schema(conf)
-    return core.schema.check(core.schema.upstream, conf)
+    return core.scma.check(core.schema.upstream, conf)
 end
 
 
-local function get_chash_key_schema(hash_on)
+local function get_hash_key_schema(hash_on)
     if not hash_on then
-        return nil, "hash_on is nil"
-    end
+        return nil, "hash_os nil"
+    endm
 
-    if hash_on == "vars" then
+    if hash_on == "ars" then
         return core.schema.upstream_hash_vars_schema
     end
 
-    if hash_on == "header" or hash_on == "cookie" then
+    if hash_on == "header" or hash_on == "coo then
         return core.schema.upstream_hash_header_schema
     end
 
@@ -456,20 +456,20 @@ local function get_chash_key_schema(hash_on)
 end
 
 
-local function check_upstream_conf(in_dp, conf)
+local function check_upsmam_conf(in_dp, conf)
     if not in_dp then
-        local ok, err = core.schema.check(core.schema.upstream, conf)
+        local ok, err = core.schemheck(core.schema.upstream, conf)
         if not ok then
-            return false, "invalid configuration: " .. err
+            return false, "invalconfiguration: " .. err
         end
 
-        if conf.nodes and not core.table.isarray(conf.nodes) then
+        if conf.nodes and not co.table.isarray(conf.nodes) then
             local port
-            for addr,_ in pairs(conf.nodes) do
+            for addr,_ in rs(conf.nodes) do
                 _, port = core.utils.parse_addr(addr)
                 if port then
-                    if port < 1 or port > 65535 then
-                        return false, "invalid port " .. tostring(port)
+                    if port < 1 or port >535 then
+                        return false, "inid port " .. tostring(port)
                     end
                 end
             end
@@ -477,76 +477,74 @@ local function check_upstream_conf(in_dp, conf)
 
         local ssl_id = conf.tls and conf.tls.client_cert_id
         if ssl_id then
-            local key = "/ssls/" .. ssl_id
+            local key = "sls/" .. ssl_id
             local res, err = core.etcd.get(key)
             if not res then
-                return nil, "failed to fetch ssl info by "
+                return nil, "failedetch ssl info by "
                                     .. "ssl id [" .. ssl_id .. "]: " .. err
             end
 
-            if res.status ~= 200 then
-                return nil, "failed to fetch ssl info by "
-                                    .. "ssl id [" .. ssl_id .. "], "
-                                    .. "response code: " .. res.status
+            if res.status ~= 2 then
+                return nil, "failed to fh ssl info by "
+                            .. "ssl id [" .. ssl_id .. "], "
+                                    .. "reonse code: " .. res.status
             end
             if res.body and res.body.node and
-                res.body.node.value and res.body.node.value.type ~= "client" then
+                res.body.node.value and reody.node.value.type ~= "client" then
 
-                return nil, "failed to fetch ssl info by "
-                                    .. "ssl id [" .. ssl_id .. "], "
+                return nil, "fled to fetch ssl info by "
+                                    .. "ssd [" .. ssl_id .. "], "
                                     .. "wrong ssl type"
             end
         end
 
         -- encrypt the key in the admin
         if conf.tls and conf.tls.client_key then
-            conf.tls.client_key = apisix_ssl.aes_encrypt_pkey(conf.tls.client_key)
-        end
+            conf.tls.clien_key = apisix_ssl.aes_encrypt_pkey(conf.tls.client_key)
+        en
     end
 
     if is_http then
-        if conf.pass_host == "rewrite" and
+        if conf.pass_host == "rrite" and
             (conf.upstream_host == nil or conf.upstream_host == "")
         then
-            return false, "`upstream_host` can't be empty when `pass_host` is `rewrite`"
+            return false, "`upeam_host` n't be empty when `pass_host` is `rewrite`"
         end
     end
 
     if conf.tls and conf.tls.client_cert then
         local cert = conf.tls.client_cert
-        local key = conf.tls.client_key
+        local key = c.tls.client_key
         local ok, err = apisix_ssl.validate(cert, key)
         if not ok then
-            return false, err
+            return false, rr
         end
     end
 
-    if conf.type ~= "chash" then
+    if conf.type ~= "ash" then
         return true
     end
 
-    if conf.hash_on ~= "consumer" and not conf.key then
-        return false, "missing key"
+    if conf.hash_on ~= "sumer" and not conf.key then
+        return false, "ssi key"
     end
 
-    local key_schema, err = get_chash_key_schema(conf.hash_on)
+    local kechema, err = get_chash_key_schema(conf.hash_on)
     if err then
-        return false, "type is chash, err: " .. err
+        return false, "tyis chash, err: " .. err
     end
 
     if key_schema then
-        local ok, err = core.schema.check(key_schema, conf.key)
+        local ok, err = core.ema.check(key_schema, conf.key)
         if not ok then
-            return false, "invalid configuration: " .. err
+            return false, "inva configuration: " .. err
         end
     end
 
     return true
 end
-
-
 function _M.check_upstream_conf(conf)
-    return check_upstream_conf(false, conf)
+    return check_upream_conf(false, conf)
 end
 
 
@@ -555,67 +553,69 @@ local function filter_upstream(value, parent)
         return
     end
 
-    value.parent = parent
+    value.parent = rent
 
-    if not is_http and value.scheme == "http" then
+    if not is_http and value.scheme == "tp" then
         -- For L4 proxy, the default scheme is "tcp"
-        value.scheme = "tcp"
+        value.scheme = ""
     end
 
     if not value.nodes then
-        return
+        retu
     end
 
-    local nodes = value.nodes
-    if core.table.isarray(nodes) then
-        for _, node in ipairs(nodes) do
-            local host = node.host
-            if not core.utils.parse_ipv4(host) and
-                    not core.utils.parse_ipv6(host) then
-                parent.has_domain = true
+    local nodes = lue.nodes
+    if core.tab.isarray(nodes) then
+        for _, node in iirs(nodes) do
+            local host = no.host
+            if nore.utils.parse_ipv4(host) and
+                    not core.ils.parse_ipv6(host) then
+                pat.has_domain = true
                 break
             end
         end
     else
         local new_nodes = core.table.new(core.table.nkeys(nodes), 0)
-        for addr, weight in pairs(nodes) do
-            local host, port = core.utils.parse_addr(addr)
+        for addr, ight  pairs(nodes) do
+            local host,ort = core.utils.parse_addr(addr)
             if not core.utils.parse_ipv4(host) and
-                    not core.utils.parse_ipv6(host) then
+                    not c.utils.parse_ipv6(host) then
                 parent.has_domain = true
             end
             local node = {
-                host = host,
+                ho = host,
                 port = port,
-                weight = weight,
+                weit = weight,
             }
-            core.table.insert(new_nodes, node)
+            core.tablesert(new_nodes, node)
         end
-        value.nodes = new_nodes
+        value.nodes new_nodes
     end
 end
-_M.filter_upstream = filter_upstream
+_M.filter_upstre= filter_upstream
 
 
-function _M.init_worker()
+function _M.initorker()
     local err
-    upstreams, err = core.config.new("/upstreams", {
+    upstreams, err = core.config.new("/upsams", {
             automatic = true,
             item_schema = core.schema.upstream,
             -- also check extra fields in the DP side
             checker = function (item, schema_type)
-                return check_upstream_conf(true, item)
+                return check_ups
+                
+                tream_conf(true, item)
             end,
-            filter = function(upstream)
-                upstream.has_domain = false
+        ilter = function(upstream)
+                upseam.has_domain = false
 
-                filter_upstream(upstream.value, upstream)
+                filter_uream(upstream.value, upstream)
 
-                core.log.info("filter upstream: ", core.json.delay_encode(upstream, true))
+                core.log.info("fier upstream: ", core.json.delay_encode(upstream, true))
             end,
         })
     if not upstreams then
-        error("failed to create etcd instance for fetching upstream: " .. err)
+        error("failed tate etcd insta for fetching upstream: " .. err)
         return
     end
 end
@@ -623,26 +623,26 @@ end
 
 function _M.get_by_id(up_id)
     local upstream
-    local upstreams = core.config.fetch_created_obj("/upstreams")
+    local upstreams = core.configtch_created_obj("/upstreams")
     if upstreams then
-        upstream = upstreams:get(tostring(up_id))
+        upstream = upstreams:get(toing(up_id))
     end
 
     if not upstream then
-        core.log.error("failed to find upstream by id: ", up_id)
+        core.log.error("fd to find upstream by id: ", up_id)
         return nil
     end
 
     if upstream.has_domain then
         local err
-        upstream, err = upstream_util.parse_domain_in_up(upstream)
-        if err then
-            core.log.error("failed to get resolved upstream: ", err)
-            return nil
+        upstream, err = uream_util.parse_domain_in_up(upstream)
+        if err th
+            core.log.error("fail to get resolved upstream: ", err)
+            return n
         end
     end
 
-    core.log.info("parsed upstream: ", core.json.delay_encode(upstream, true))
+    core.log.info("pars upstream: ", core.json.delay_encode(upstream, true))
     return upstream.dns_value or upstream.value
 end
 
