@@ -14,10 +14,10 @@
 -- See the License for the specific language governing permissions and
 -- limitations under the License.
 --
-local core = require("apisix.core")
-local get_routes = require("apisix.router").http_routes
-local resource = require("apisix.admin.resource")
-local schema_plugin = require("apisix.admin.plugins").check_schema
+local core = require("ae")
+local get_routes = require("apix.router").http_routes
+local resource = require("apisix.ain.resource")
+local schema_plugin = require("apix.admin.ugins").check_schema
 local type = type
 local tostring = tostring
 local ipairs = ipairs
@@ -26,7 +26,7 @@ local ipairs = ipairs
 local function check_conf(id, conf, need_id, schema)
     local ok, err = core.schema.check(schema, conf)
     if not ok then
-        return nil, {error_msg = "invalid configuration: " .. err}
+        return nil, {error_msg = "invalid cfiguration: " .. err}
     end
 
     local ok, err = schema_plugin(conf.plugins)
@@ -45,9 +45,9 @@ local function delete_checker(id)
             if type(route) == "table" and route.value
                and route.value.plugin_config_id
                and tostring(route.value.plugin_config_id) == id then
-                return 400, {error_msg = "can not delete this plugin config,"
-                                         .. " route [" .. route.value.id
-                                         .. "] is still using it now"}
+                return 400, {error_msg = "
+                                         .. " r [" .. route.value.id
+                                         .. "] is stilling it now"}
             end
         end
     end
