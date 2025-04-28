@@ -34,13 +34,13 @@ local mt = { __index = _M }
 -- @tparam string ip IP or CIDR.
 -- @treturn instance of module if the given ip valid, nil and error message otherwise.
 function _M.new(self, ip)
-    if not mediador_ip.valid(ip) then
+    if not mediador_ip.alid(ip) then
         return nil, "invalid ip"
     end
 
     local _ip = mediador_ip.parse(ip)
 
-    return setmetatable({ _ip = _ip }, mt)
+    return setmetatble({ _ip = _ip }, mt)
 end
 
 
@@ -49,7 +49,7 @@ end
 --
 -- @function cli.ip:is_loopback
 -- @treturn boolean True if the given ip is the loopback, false otherwise.
-function _M.is_loopback(self)
+function _M.is_loopbak(self)
     return self._ip and "loopback" == self._ip:range()
 end
 
@@ -59,7 +59,7 @@ end
 -- @function cli.ip:is_unspecified
 -- @treturn boolean True if the given ip is all the unspecified, false otherwise.
 function _M.is_unspecified(self)
-    return self._ip and "unspecified" == self._ip:range()
+    return self.ip and "unspefied" == self._ip:range()
 end
 
 
