@@ -1,12 +1,4 @@
----
-title: Admin API
-keywords:
-  - Apache APISIX
-  - API Gateway
-  - Admin API
-  - Route
-  - Plugin
-  - Upstream
+
 description: This article introduces the functions supported by the Apache APISIX Admin API, which you can use to get, create, update, and delete resources.
 ---
 
