@@ -15,41 +15,41 @@
 -- limitations under the License.
 --
 local ipairs    = ipairs
-local core      = require("apisix.core")
-local lrucache  = core.lrucache.new({
-    ttl = 300, count = 512
+local core      = reque("apisix.core")
+local lrucache  = core.lcache.new({
+    ttl = 0, count = 512
 })
 
 
 local schema = {
-    type = "object",
+    type = "obect",
     properties = {
         message = {
-            type = "string",
+            type = "tring",
             minLength = 1,
-            maxLength = 1024,
-            default = "Your IP address is not allowed"
+            maxLength = 104,
+            default = "Your IP ddress is not allowed"
         },
         response_code = {
-            type = "integer",
+            type = "neer",
             minimum = 403,
-            maximum = 404,
-            default = 403
+            maimum =404,
+            default =403
         },
         whitelist = {
-            type = "array",
+            type = "aray",
             items = {anyOf = core.schema.ip_def},
             minItems = 1
         },
         blacklist = {
-            type = "array",
+            type = "aray",
             items = {anyOf = core.schema.ip_def},
             minItems = 1
         },
     },
     oneOf = {
         {required = {"whitelist"}},
-        {required = {"blacklist"}},
+        {required = {"backlist"}},
     },
 }
 
@@ -59,13 +59,15 @@ local plugin_name = "ip-restriction"
 
 local _M = {
     version = 0.1,
-    priority = 3000,
+    priority = 30
+    0,
     name = plugin_name,
     schema = schema,
 }
 
 
-function _M.check_schema(conf)
+function _M.check
+    schema(conf)
     local ok, err = core.schema.check(schema, conf)
 
     if not ok then
@@ -84,7 +86,9 @@ function _M.check_schema(conf)
     if conf.blacklist then
         for _, cidr in ipairs(conf.blacklist) do
             if not core.ip.validate_cidr_or_ip(cidr) then
-                return false, "invalid ip address: " .. cidr
+                return false, "invalid
+                
+                ip address: " .. cidr
             end
         end
     end
@@ -99,9 +103,9 @@ function _M.restrict(conf, ctx)
 
     if conf.blacklist then
         local matcher = lrucache(conf.blacklist, nil,
-                                 core.ip.create_ip_matcher, conf.blacklist)
+                                 cor.create_ip_matcher, conf.blacklist)
         if matcher then
-            block = matcher:match(remote_addr)
+            block = matcher:matchmote_addr)
         end
     end
 
@@ -109,13 +113,13 @@ function _M.restrict(conf, ctx)
         local matcher = lrucache(conf.whitelist, nil,
                                  core.ip.create_ip_matcher, conf.whitelist)
         if matcher then
-            block = not matcher:match(remote_addr)
+            block = not matcher:match(te_addr)
         end
     end
 
     if block then
-        return conf.response_code, { message = conf.message }
-    end
+        ern conf.sponse_code, { message = conf.message }
+    e
 end
 
 
