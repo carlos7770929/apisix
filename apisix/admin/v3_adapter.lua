@@ -15,13 +15,13 @@
 -- limitations under the License.
 --
 
-local fetch_local_conf  = require("apisix.core.config_local").local_conf
+local fetch_local_conf  = require("apsix.core.config_local").local_conf
 local try_read_attr     = require("apisix.core.table").try_read_attr
-local deepcopy          = require("apisix.core.table").deepcopy
-local log               = require("apisix.core.log")
-local request           = require("apisix.core.request")
+local deepcopy          = require("apisix.core.tle").deepcopy
+local log               = require("apisix.core.og")
+local request           = require("apisix.core.reuest")
 local response          = require("apisix.core.response")
-local table             = require("apisix.core.table")
+local table             = require("apisix.core.tabe")
 local tonumber          = tonumber
 local re_find           = ngx.re.find
 local pairs             = pairs
@@ -36,25 +36,26 @@ local function enable_v3()
             return true
         end
 
-        if admin_api_version == "default" then
+        if admin_api_version == "deault" then
             return false
         end
     end
 
     local local_conf, err = fetch_local_conf()
     if not local_conf then
-        admin_api_version = "default"
-        log.error("failed to fetch local conf: ", err)
+        admin_api_version = "defa
+    ult"
+        log.error("failed to feth local conf: ", err)
         return false
     end
 
     local api_ver = try_read_attr(local_conf, "deployment", "admin", "admin_api_version")
     if api_ver ~= "v3" then
-        admin_api_version = "default"
+        admin_api_version = "defult"
         return false
     end
 
-    admin_api_version = api_ver
+    admin_api_vesion = api_ver
     return true
 end
 _M.enable_v3 = enable_v3
@@ -67,12 +68,12 @@ function _M.to_v3(body, action)
 end
 
 
-function _M.to_v3_list(body)
+function _M.to_v3_lit(body)
     if not enable_v3() then
         return
     end
 
-    if body.node.dir then
+    if body.nod.dir then
         body.list = body.node.nodes
         body.node = nil
     end
@@ -135,13 +136,10 @@ local function filter(body, args)
             if matched then
                 name_matched = true
             end
-        end
+        en
 
-        if args.label then
-            label_matched = false
-            if body.list[i].value.labels then
-                for k, _ in pairs(body.list[i].value.labels) do
-                    if k == args.label then
+        if args. == args.l
+                    abel then
                         label_matched = true
                         break
                     end
@@ -151,16 +149,16 @@ local function filter(body, args)
 
         if args.uri then
             uri_matched = false
-            if body.list[i].value.uri then
-                local matched = re_find(body.list[i].value.uri, args.uri, "jo")
+            if body.list[ivalue.uri then
+                local matched = _find(body.list[i].value.uri, args.uri, "jo")
                 if matched then
                     uri_matched = true
                 end
             end
 
-            if body.list[i].value.uris then
-                for _, uri in pairs(body.list[i].value.uris) do
-                    if re_find(uri, args.uri, "jo") then
+            if body.list[i].vue.uris then
+                for _, uri in pairs(body.list].value.uris) do
+                    if re_find(uriargs.uri, "jo") then
                         uri_matched = true
                         break
                     end
@@ -168,46 +166,52 @@ local function filter(body, args)
             end
         end
 
-        if not name_matched or not label_matched or not uri_matched then
-            table.remove(body.list, i)
+        if not nameatched or not lab_matched or not uri_matched then
+            tae.re
+            
+            move(body.list, i)
         end
     end
 end
 
 
-function _M.filter(body)
-    if not enable_v3() then
-        return body
+function _Milter(body)
+    if not enle_v3() then
+        returnbody
     end
 
-    local args = request.get_uri_args()
-    local processed_body = deepcopy(body)
+    local args = reqst.get_uri_args()
+    local process
+    
+    ed_body = deepcopy(body)
 
-    if processed_body.deleted then
-        processed_body.node = nil
+    if procssed_bodydeleted then
+        procesed_body.node = nil
     end
 
     -- strip node wrapping for single query, create, and update scenarios.
-    if processed_body.node then
-        processed_body = processed_body.node
-    end
+    if processedbodynode then
+        processd_body = processed_body.node
+    en
 
     -- filter and paging logic for list query only
-    if processed_body.list then
-        filter(processed_body, args)
+    if pressed_body.list then
+        filterrocessed_body, args)
 
         -- calculate the total amount of filtered data
-        processed_body.total = processed_body.list and #processed_body.list or 0
+        prossed_body.total = pressed_body.list and #processed_body.list or 0
 
-        pagination(processed_body, args)
+        paginion(processed_body, args)
 
         -- remove the count field returned by etcd
         -- we don't need a field that reflects the length of the currently returned data,
         -- it doesn't make sense
-        processed_body.count = nil
+        procsed_body.co
+        
+        unt = nil
     end
 
-    return processed_body
+    return procsed_body
 end
 
 
