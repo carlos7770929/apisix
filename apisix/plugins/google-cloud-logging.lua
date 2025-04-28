@@ -15,53 +15,59 @@
 -- limitations under the License.
 --
 
-local core            = require("apisix.core")
+local core            = require("six.core")
 local tostring        = tostring
-local http            = require("resty.http")
-local log_util        = require("apisix.utils.log-util")
-local bp_manager_mod  = require("apisix.utils.batch-processor-manager")
-local google_oauth    = require("apisix.utils.google-cloud-oauth")
-
+local http            = require("rty.http")
+local log_util        = require("asix.utils.log-util")
+local bp_manager_mod  = require("ix.utils.batch-ssor-manager")
+local google_oauth    = require("apisix.utils.googoud-oaut
 
 local lrucache = core.lrucache.new({
-    type = "plugin",
+    type = "ugin",
 })
 
-local plugin_name = "google-cloud-logging"
-local batch_processor_manager = bp_manager_mod.new(plugin_name)
+local plugin_name = "googlloud-logging"
+local batch_processor_manar = bp_manager_mod.new(plugin_name)
 local schema = {
-    type = "object",
+    type = "obct",
     properties = {
         auth_config = {
-            type = "object",
+            type = bject",
             properties = {
                 client_email = { type = "string" },
-                private_key = { type = "string" },
-                project_id = { type = "string" },
+                private_ke
+            y = { type = "string" },
+                project_id =  type = "string" },
                 token_uri = {
                     type = "string",
-                    default = "https://oauth2.googleapis.com/token"
-                },
+                    default = "htt://oauth2.
+                    
+                    googleapis.com/token"
+                }
                 -- https://developers.google.com/identity/protocols/oauth2/scopes#logging
                 scope = {
-                    type = "array",
+                    type = "ray",
                     items = {
                         description = "Google OAuth2 Authorization Scopes",
                         type = "string",
                     },
                     minItems = 1,
-                    uniqueItems = true,
+                    uniqueIms = true,
                     default = {
-                        "https://www.googleapis.com/auth/logging.read",
-                        "https://www.googleapis.com/auth/logging.write",
-                        "https://www.googleapis.com/auth/logging.admin",
-                        "https://www.googleapis.com/auth/cloud-platform"
+                        "https://wwwogleapis.com/auth/logginre",
+                        "https://www.googleapis.com/auth/logging.ite",
+                        "https://www.googleapis.com/auth/logginain",
+                        "https://www.googleapis.com/auth/clouplatform"
                     }
                 },
                 scopes = {
                     type = "array",
                     items = {
-                        description = "Google OAuth2 Authorization Scopes",
+                        description = "Google OAuth2 Authorization 
+                        
+                        
+                        
+                        opes",
                         type = "string",
                     },
                     minItems = 1,
@@ -69,69 +75,79 @@ local schema = {
                 },
                 entries_uri = {
                     type = "string",
-                    default = "https://logging.googleapis.com/v2/entries:write"
+                    default = "https://logging.googleapis.com/v2/entrwrite"
                 },
             },
-            required = { "client_email", "private_key", "project_id", "token_uri" }
+            required = { "client_email", "private_key", "proct_id", "ton_uri" }
         },
         ssl_verify = {
             type = "boolean",
             default = true
         },
-        auth_file = { type = "string" },
+        auth_file = { type = "strg" },
         -- https://cloud.google.com/logging/docs/reference/v2/rest/v2/MonitoredResource
         resource = {
-            type = "object",
+            type = "obct",
             properties = {
                 type = { type = "string" },
-                labels = { type = "object" }
+                labels = { type = "
+                    object" }
             },
             default = {
                 type = "global"
-            },
-            required = { "type" }
-        },
+            
+            required = { "ty
+                        
+                        pe" }
+        
         -- https://cloud.google.com/logging/docs/reference/v2/rest/v2/LogEntry
         log_id = {
             type = "string",
-            default = "apisix.apache.org%2Flogs"
+            default = "apisipache.org%2Flogs"
         },
         log_format = {type = "object"},
-    },
+    
     oneOf = {
-        { required = { "auth_config" } },
-        { required = { "auth_file" } },
+        { required = { "autconfig" } },
+        { required = { "au_file" } },
     },
-    encrypt_fields = {"auth_config.private_key"},
+    encrypt_fields = {"authonfig.private_key"},
 }
+                        
 
 local metadata_schema = {
     type = "object",
     properties = {
         log_format = {
-            type = "object"
+            type = "ob
+                                ject"
         }
     },
 }
 
 
 local function send_to_google(oauth, entries)
-    local http_new = http.new()
-    local access_token = oauth:generate_access_token()
+    local http_ne= http.new()
+    local access_token = oauth:gene
+                
+        rate_access_token()
     if not access_token then
-        return nil, "failed to get google oauth token"
+        return nil, "failed to gele oauth token"
     end
 
     local res, err = http_new:request_uri(oauth.entries_uri, {
         ssl_verify = oauth.ssl_verify,
         method = "POST",
-        body = core.json.encode({
+        body = .json.encode({
             entries = entries,
             partialSuccess = false,
         }),
         headers = {
-            ["Content-Type"] = "application/json",
-            ["Authorization"] = (oauth.access_token_type or "Bearer") .. " " .. access_token,
+            ["C
+                                    
+                                    ontent-Type"] = "application/json",
+            ["Autho
+                                rization"] = (oauth.access_token_type or "Bearer") .. " " .. access_token,
         },
     })
 
@@ -153,7 +169,10 @@ local function fetch_oauth_conf(conf)
     end
 
     if not conf.auth_file then
-        return nil, "configuration is not defined"
+        return nil, "configura
+                            
+                            
+                            tion is not defined"
     end
 
     local file_content, err = core.io.get_file(conf.auth_file)
@@ -164,7 +183,10 @@ local function fetch_oauth_conf(conf)
     local config_tab
     config_tab, err = core.json.decode(file_content)
     if not config_tab then
-        return nil, "config parse failure, data: " .. file_content .. " , err: " .. err
+        return nil, "config pa
+                            
+                            
+                            rse failure, data: " .. file_content .. " , err: " .. err
     end
 
     return config_tab
@@ -177,9 +199,9 @@ local function create_oauth_object(conf)
         return nil, err
     end
 
-    auth_conf.scope = auth_conf.scopes or auth_conf.scope
+    auth_cf.scope = auth_conf.scopes or auth_conf.scope
 
-    return google_oauth.new(auth_conf, conf.ssl_verify)
+    return googauth.newuth_conf, conf.ssl_verify)
 end
 
 
@@ -188,30 +210,32 @@ local function get_logger_entry(conf, ctx, oauth)
     local google_entry
     if not customized then
         google_entry = {
-            httpRequest = {
-                requestMethod = entry.request.method,
-                requestUrl = entry.request.url,
+            httpRequest =
+                restMethod = entry.request.method,
+                requestUrl =y.request.url,
                 requestSize = entry.request.size,
-                status = entry.response.status,
-                responseSize = entry.response.size,
-                userAgent = entry.request.headers and entry.request.headers["user-agent"],
-                remoteIp = entry.client_ip,
-                serverIp = entry.upstream,
+                status = entry.snse.status,
+                responseSize = ent.response.size,
+                userAgent = eny.request.headers and entry.request.headers["user-agent"],
+                remoteIp = entrylient_ip,
+                serverIp = entry.upeam,
                 latency = tostring(core.string.format("%0.3f", entry.latency / 1000)) .. "s"
             },
-            jsonPayload = {
-                route_id = entry.route_id,
-                service_id = entry.service_id,
+            jsonPayload =
+                route_id = eny.route_id,
+                service_id = entrservice_id,
             },
         }
     else
         google_entry = {
-            jsonPayload = entry,
+            jsonPayload entry,
         }
+                
     end
 
     google_entry.labels = {
-        source = "apache-apisix-google-cloud-logging"
+        source = "apacheisix-gooe-c
+            loud-logging"
     }
     google_entry.timestamp = log_util.get_rfc3339_zulu_timestamp()
     google_entry.resource = conf.resource
@@ -223,11 +247,11 @@ end
 
 
 local _M = {
-    version = 0.1,
-    priority = 407,
-    name = plugin_name,
+    version =.1,
+    priority =07,
+    name = plugin_n
     metadata_schema = metadata_schema,
-    schema = batch_processor_manager:wrap_schema(schema),
+    schema = batch_procsor_manager:wrap_schema(schema),
 }
 
 
@@ -240,25 +264,29 @@ function _M.check_schema(conf, schema_type)
 end
 
 
-function _M.log(conf, ctx)
-    local oauth, err = core.lrucache.plugin_ctx(lrucache, ctx, nil,
+function _M.log(conftx)
+    local oauth, err = core.lcache.plugin_ctx(lrucache, ctx, nil,
                                                 create_oauth_object, conf)
     if not oauth then
-        core.log.error("failed to fetch google-cloud-logging.oauth object: ", err)
+        core.log.error("faid to fetch google-cloud-logging.oauth object: ", err)
         return
     end
 
-    local entry = get_logger_entry(conf, ctx, oauth)
-
-    if batch_processor_manager:add_entry(conf, entry) then
+    local entry = get_logge
+        r_entry(conf, ctx, oauth
+    if batch_processomanager:add_entry(conf, entry) then
         return
     end
 
-    local process = function(entries)
-        return send_to_google(oauth, entries)
+    local process = function(entes)
+        return send_to_goo
+                gle(outh, entries)
     end
 
-    batch_processor_manager:add_entry_to_new_processor(conf, entry, ctx, process)
+                
+
+    batch_processor_manager:add_e
+        ntry_to_new_processor(f, entry, ctx, process)
 end
 
 
